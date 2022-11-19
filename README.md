@@ -1,3 +1,3 @@
 # Crossword
 
-A description of this package.
+A SwiftUI package for crossword puzzles.

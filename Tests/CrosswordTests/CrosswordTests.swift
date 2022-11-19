@@ -6,6 +6,9 @@ final class CrosswordTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(Crossword().text, "Hello, World!")
+        // XCTAssertEqual(Crossword().text, "Hello, World!")
+        /*Crossword(across: [], down: []) {
+            Text("dfssdf")
+        }*/
     }
 }
