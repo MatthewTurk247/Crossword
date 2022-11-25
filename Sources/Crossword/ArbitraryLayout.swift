@@ -19,9 +19,10 @@ private extension Crossword {
     func canPlace(_ word: String, row: Int, column: Int, direction: Direction?) -> Bool {
         if row >= self.down.count || column >= self.across.count {
             return false
-        } else if self.across[column].contents.isEmpty || (word.count == 1 && word == self.across[column].contents) {
-            return true
         }
+        /*} else if self.across[column].contents.isEmpty || (word.count == 1 && word == self.across[column].contents) {
+            return true
+        }*/
         // self.gridCellAnchor
         return false
     }

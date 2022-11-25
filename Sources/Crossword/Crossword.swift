@@ -14,7 +14,9 @@ public struct Crossword: View {
     public init<T>(across: any RandomAccessCollection<T>, down: any RandomAccessCollection<T>) where T: StringProtocol {
         self.across = across.map { String($0).uppercased() }
         self.down = down.map { String($0).uppercased() }
-        grid.rows = []
+        grid.rows = [["", "", ""],
+                     ["", "", ""],
+                     ["", "", ""]]
     }
     
     // TODO: Create initializer that takes in the path of a crossword file (blanking on the extension).
@@ -59,19 +61,18 @@ public struct Crossword: View {
     
     public var body: some View {
         Grid(horizontalSpacing: 5, verticalSpacing: 5) {
-            ForEach(0...4, id: \.self) { index in
+            ForEach(0...2, id: \.self) { index in
                 GridRow {
-                    ForEach(0...4, id: \.self) { column in
-                            //
-                        TextField("", text: grid.$rows[index][column])
-                            .onReceive(Just(grid.rows[index][column])) { _ in
+                    ForEach(0...2, id: \.self) { column in
+                        TextField("", text: $grid.rows[index][column])
+                            .onReceive(Just(grid)) { _ in
                                 limitText(to: 1)
                             }
                             .background(Color.white)
                             .font(.system(size: 48))
                             .bold().multilineTextAlignment(.center)
                     }
-                }.padding(.horizontal, 5)
+                }.padding(.horizontal, 0)
             }
         }.border(Color.black, width: 5).background(Color.black)
     }
