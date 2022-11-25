@@ -12,11 +12,13 @@ open class Entry {
     var answer: String
     var row: Int
     var column: Int
+    var contents: String
     
     init(clue: String, answer: String, row: Int, column: Int) {
         self.clue = clue
         self.answer = answer
         self.row = row
         self.column = column
+        self.contents = ""
     }
 }

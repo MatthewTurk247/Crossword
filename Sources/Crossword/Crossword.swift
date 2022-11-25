@@ -4,44 +4,74 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 public struct Crossword: View {
-    var across: any RandomAccessCollection<Entry>
-    var down: any RandomAccessCollection<Entry> // RandomAccessCollection<Dictionary<String, String>>
-    var verbatim: [String: String] = [:]
-    @State private var cursorX: [Int: String] = [0: ""]
-    @State private var cursorY: [Int: String] = [0: ""]
+    var across: [String]
+    var down: [String]
+    @ObservedObject private var grid = GridState()
     @State private var exampleString = ""
     
     // public private(set) var text = "Hello, World!"
 
-    public init(across: any RandomAccessCollection<Entry>, down: any RandomAccessCollection<Entry>) {
-        self.across = across
-        self.down = down
+    public init<T>(across: any RandomAccessCollection<T>, down: any RandomAccessCollection<T>) where T: StringProtocol {
+        self.across = across.map { String($0).uppercased() }
+        self.down = down.map { String($0).uppercased() }
+        grid.rows = []
     }
     
-    public init(_ verbatim: Dictionary<String, String>) {
-        self.across = []
-        self.down = []
-        self.verbatim = verbatim
-    }
+    // TODO: Create initializer that takes in the path of a crossword file (blanking on the extension).
+    
+    // TODO: Add support for custom layout/style for clues listed below crossword.
+    
+    /*public init(across: Dictionary<String, String>, down: Dictionary<String, String>) {
+        self.across = across.map({ clue, answer in
+            return Entry(clue: clue, answer: answer, row: 0, column: 0)
+        })
+        
+        self.down = down.map({ clue, answer in
+            return Entry(clue: clue, answer: answer, row: 0, column: 0)
+        })
+    }*/
+    
+    /// Iniitialize with an array of rows, each of which contains some number of strings (answers) and may be associated with a number corresponding to the clue.
+    /*public init(grid: [[Int: any RandomAccessCollection<String>]], answers: Dictionary<Int, String>) {
+        
+    }*/
     
     /*public init(rows: (Text) -> some View, columns: (Text) -> some View) {
         
     }*/
     
+    /*
+     Crossword(across: ["something", "another", "answer"], down: ["something", "another", "answer"])
+        .clues { cluesDict[$0] }
+        .positions { $0 }
+     
+     Crossword(clues: ["something", "another clue", "another one"])
+        .across { acrossDict[$0] }
+        .down { downDict[$0] } // given clues and no answers, generates a blank n-by-n grid, where n is the number of clues passed in
+        .positions { $0 } // explicitly state grid layout of clues; potentially overrides randomly generated layout
+     
+     
+     
+     Crossword(clues: clues) { index, clue in
+        Row(answersDict[clue])
+     }
+     */
+    
     public var body: some View {
         Grid(horizontalSpacing: 5, verticalSpacing: 5) {
-            ForEach(0...4, id: \.self) { _ in
+            ForEach(0...4, id: \.self) { index in
                 GridRow {
-                    ForEach(0...4, id: \.self) { _ in
-                        TextField("", text: $exampleString)
-                            .onReceive(Just(exampleString)) { _ in
+                    ForEach(0...4, id: \.self) { column in
+                            //
+                        TextField("", text: grid.$rows[index][column])
+                            .onReceive(Just(grid.rows[index][column])) { _ in
                                 limitText(to: 1)
                             }
                             .background(Color.white)
                             .font(.system(size: 48))
                             .bold().multilineTextAlignment(.center)
                     }
-                }
+                }.padding(.horizontal, 5)
             }
         }.border(Color.black, width: 5).background(Color.black)
     }
@@ -51,8 +81,8 @@ public struct Crossword: View {
             exampleString = String(exampleString.prefix(upperBound))
         }
     }
-    
-    
+
+    // tuple of clue and answer
     /*public init(content: @escaping () -> Content) {
         self.content = content
     }*/
@@ -70,21 +100,11 @@ Crossword(across: any RandomAccessCollection<Entry>, down: any RandomAccessColle
     Column()
     Row()
 }
- 
- Crossword() {
-    Text()
-    Text()
- }, answers: {
-    Text()
-    Text()
- }.foregroundColor(.red)
-
-Crossword(across: , down: )
 */
 
 @available(iOS 16.0, *)
 struct Crossword_Previews: PreviewProvider {
     static var previews: some View {
-        Crossword(across: [], down: [])
+        Crossword(across: ["Jupiter"], down: ["Field", "Adams"])
     }
 }
