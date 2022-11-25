@@ -14,9 +14,11 @@ public struct Crossword: View {
     public init<T>(across: any RandomAccessCollection<T>, down: any RandomAccessCollection<T>) where T: StringProtocol {
         self.across = across.map { String($0).uppercased() }
         self.down = down.map { String($0).uppercased() }
-        grid.rows = [["", "", ""],
-                     ["", "", ""],
-                     ["", "", ""]]
+        grid.rows = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ]
     }
     
     // TODO: Create initializer that takes in the path of a crossword file (blanking on the extension).
@@ -51,22 +53,17 @@ public struct Crossword: View {
         .across { acrossDict[$0] }
         .down { downDict[$0] } // given clues and no answers, generates a blank n-by-n grid, where n is the number of clues passed in
         .positions { $0 } // explicitly state grid layout of clues; potentially overrides randomly generated layout
-     
-     
-     
-     Crossword(clues: clues) { index, clue in
-        Row(answersDict[clue])
-     }
      */
     
     public var body: some View {
         Grid(horizontalSpacing: 5, verticalSpacing: 5) {
-            ForEach(0...2, id: \.self) { index in
+            ForEach(0..<grid.rows.count, id: \.self) { index in
                 GridRow {
-                    ForEach(0...2, id: \.self) { column in
+                    ForEach(0..<grid.rows[index].count, id: \.self) { column in
                         TextField("", text: $grid.rows[index][column])
-                            .onReceive(Just(grid)) { _ in
-                                limitText(to: 1)
+                            .onReceive(Just(grid)) { item in
+                                limitText(item, row: index, column: column, to: 1)
+                                // And then cause the "tab" key to be pressed.
                             }
                             .background(Color.white)
                             .font(.system(size: 48))
@@ -76,10 +73,10 @@ public struct Crossword: View {
             }
         }.border(Color.black, width: 5).background(Color.black)
     }
-                                       
-    private func limitText(to upperBound: Int) {
-        if exampleString.count > upperBound {
-            exampleString = String(exampleString.prefix(upperBound))
+    
+    private func limitText(_ grid: GridState, row: Int, column: Int, to upperBound: Int) {
+        if grid.rows[row][column].count > upperBound {
+            grid.rows[row][column] = String(grid.rows[row][column].prefix(upperBound))
         }
     }
 
